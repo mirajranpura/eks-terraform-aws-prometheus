@@ -42,3 +42,21 @@ variable "node_max_size" {
   description = "Maximum number of nodes"
   type        = number
 }
+
+variable "vpc_cni_version" {
+  description = "VPC CNI add-on version (leave empty for latest)"
+  type        = string
+  default     = null
+}
+
+variable "coredns_version" {
+  description = "CoreDNS add-on version (leave empty for latest)"
+  type        = string
+  default     = null
+}
+
+variable "kube_proxy_version" {
+  description = "kube-proxy add-on version (leave empty for latest)"
+  type        = string
+  default     = null
+}

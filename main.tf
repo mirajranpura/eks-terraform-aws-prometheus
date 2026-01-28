@@ -38,4 +38,20 @@ module "eks" {
   node_desired_size   = var.node_desired_size
   node_min_size       = var.node_min_size
   node_max_size       = var.node_max_size
+  
+  vpc_cni_version    = var.vpc_cni_version
+  coredns_version    = var.coredns_version
+  kube_proxy_version = var.kube_proxy_version
+}
+
+# Prometheus Module
+module "prometheus" {
+  source = "./modules/prometheus"
+  
+  cluster_name            = var.cluster_name
+  workspace_alias         = "${var.cluster_name}-amp"
+  cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
+  create_oidc_provider    = true
+  prometheus_namespace    = "prometheus"
+  prometheus_service_account = "prometheus-server"
 }

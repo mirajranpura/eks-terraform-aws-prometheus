@@ -37,3 +37,23 @@ output "node_group_status" {
   description = "EKS node group status"
   value       = aws_eks_node_group.main.status
 }
+
+output "vpc_cni_addon_version" {
+  description = "VPC CNI add-on version"
+  value       = aws_eks_addon.vpc_cni.addon_version
+}
+
+output "coredns_addon_version" {
+  description = "CoreDNS add-on version"
+  value       = aws_eks_addon.coredns.addon_version
+}
+
+output "kube_proxy_addon_version" {
+  description = "kube-proxy add-on version"
+  value       = aws_eks_addon.kube_proxy.addon_version
+}
+
+output "cluster_oidc_issuer_url" {
+  description = "OIDC issuer URL for the EKS cluster"
+  value       = aws_eks_cluster.main.identity[0].oidc[0].issuer
+}
