@@ -13,7 +13,7 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.29"
+  default     = "1.30"
 }
 
 variable "vpc_cidr" {
@@ -68,4 +68,22 @@ variable "node_max_size" {
   description = "Maximum number of nodes"
   type        = number
   default     = 3
+}
+
+variable "vpc_cni_version" {
+  description = "VPC CNI add-on version (leave empty for latest)"
+  type        = string
+  default     = null
+}
+
+variable "coredns_version" {
+  description = "CoreDNS add-on version (leave empty for latest)"
+  type        = string
+  default     = null
+}
+
+variable "kube_proxy_version" {
+  description = "kube-proxy add-on version (leave empty for latest)"
+  type        = string
+  default     = null
 }
