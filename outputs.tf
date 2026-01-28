@@ -68,3 +68,8 @@ output "prometheus_role_arn" {
   description = "IAM role ARN for Prometheus service account"
   value       = module.prometheus.prometheus_role_arn
 }
+
+output "aws_region" {
+  description = "AWS region"
+  value       = var.aws_region
+}

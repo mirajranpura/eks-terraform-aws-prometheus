@@ -103,13 +103,25 @@ kubectl get pods -A
 
 ### 7. Deploy Prometheus for Monitoring
 
-Apply the Kubernetes manifests to deploy Prometheus:
+Use the provided deployment script that automatically substitutes Terraform outputs:
 
 ```bash
+./scripts/deploy-prometheus.sh
+```
+
+Or manually apply the manifests (see [k8s/README.md](k8s/README.md) for details):
+
+```bash
+# Get Terraform outputs
+export PROMETHEUS_ROLE_ARN=$(terraform output -raw prometheus_role_arn)
+export AMP_WORKSPACE_ENDPOINT=$(terraform output -raw prometheus_workspace_endpoint)
+export AWS_REGION=$(terraform output -raw aws_region)
+
+# Apply with substitution
 kubectl apply -f k8s/prometheus-namespace.yaml
-kubectl apply -f k8s/prometheus-serviceaccount.yaml
+envsubst < k8s/prometheus-serviceaccount.yaml | kubectl apply -f -
 kubectl apply -f k8s/prometheus-rbac.yaml
-kubectl apply -f k8s/prometheus-config.yaml
+envsubst < k8s/prometheus-config.yaml | kubectl apply -f -
 kubectl apply -f k8s/prometheus-deployment.yaml
 ```
 

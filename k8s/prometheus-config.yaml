@@ -41,10 +41,11 @@ data:
             target_label: namespace
 
     remote_write:
-      - url: https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-35f570b6-a292-42ea-9455-c215978e5c5f/api/v1/remote_write
+      # Replace with your AMP workspace endpoint from Terraform output: terraform output prometheus_workspace_endpoint
+      - url: ${AMP_WORKSPACE_ENDPOINT}api/v1/remote_write
         queue_config:
           max_samples_per_send: 1000
           max_shards: 200
           capacity: 2500
         sigv4:
-          region: us-west-2
+          region: ${AWS_REGION}
