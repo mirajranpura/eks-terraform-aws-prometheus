@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 30s
+  external_labels:
+    clusterArn: arn:aws:eks:eu-west-1:685744656272:cluster/rnr-012-b-dremio-uat-eks-cluster
+
+scrape_configs:
+  - job_name: dremio-coordinator
+    kubernetes_sd_configs:
+      - role: pod
+
+    scheme: http
+    metrics_path: /metrics
+
+    relabel_configs:
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_label_role]
+        regex: dremio-cluster-pod
+
+      - action: keep
+        source_labels: [__meta_kubernetes_pod_container_port_name]
+        regex: prometheus
+
+      - action: replace
+        source_labels: [__meta_kubernetes_pod_ip, __meta_kubernetes_pod_container_port_number]
+        separator: ':'
+        target_label: __address__
+
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
