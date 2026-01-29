@@ -79,6 +79,8 @@ kubectl apply -f prometheus-deployment.yaml
 
 ## Verification
 
+### Quick Check
+
 Check that Prometheus is running:
 
 ```bash
@@ -88,7 +90,7 @@ kubectl get pods -n prometheus
 View Prometheus logs:
 
 ```bash
-kubectl logs -n prometheus -l app=prometheus-server
+kubectl logs -n prometheus -l app=prometheus
 ```
 
 Port-forward to access Prometheus UI:
@@ -99,19 +101,31 @@ kubectl port-forward -n prometheus svc/prometheus-server 9090:9090
 
 Then visit http://localhost:9090 in your browser.
 
-## Verify CoreDNS Monitoring
+### Comprehensive Verification
 
-Check that CoreDNS targets are being scraped:
+**For detailed verification of Prometheus, CoreDNS metrics collection, and AWS Managed Prometheus (AMP) integration, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).**
 
-1. Port-forward to Prometheus (see above)
-2. Visit http://localhost:9090/targets
-3. Look for the "coredns" job with healthy targets
+The troubleshooting guide includes:
+- Step-by-step verification commands
+- How to check if CoreDNS metrics are being collected
+- How to verify remote write to AMP is working
+- Common issues and solutions
+- AWS CLI profile configuration
+- Grafana setup for querying AMP
 
-Query CoreDNS metrics:
+### Quick CoreDNS Check
+
+Verify CoreDNS targets are being scraped:
 
 ```bash
-# Via port-forward
-curl 'http://localhost:9090/api/v1/query?query=coredns_dns_requests_total'
+# Port-forward to Prometheus
+kubectl port-forward -n prometheus svc/prometheus-server 9090:9090 &
+
+# Check CoreDNS metrics
+curl -s 'http://localhost:9090/api/v1/query?query=coredns_dns_requests_total' | python3 -m json.tool
+
+# Clean up
+pkill -f "port-forward.*prometheus"
 ```
 
 ## Cleanup
@@ -130,33 +144,39 @@ kubectl delete namespace prometheus
 
 ## Troubleshooting
 
-### Prometheus pod not starting
+**For comprehensive troubleshooting, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).**
+
+The troubleshooting guide covers:
+- Prometheus pod issues
+- CoreDNS target discovery problems
+- Remote write to AMP verification
+- IAM role and authentication issues
+- AWS CLI configuration
+- Complete verification workflow
+
+### Quick Troubleshooting
+
+#### Prometheus pod not starting
 
 Check events:
 ```bash
-kubectl describe pod -n prometheus <pod-name>
+kubectl describe pod -n prometheus -l app=prometheus
 ```
 
-### IRSA not working
+#### IRSA not working
 
 Verify the IAM role ARN annotation:
 ```bash
-kubectl get sa prometheus-server -n prometheus -o yaml
+kubectl get sa prometheus-server -n prometheus -o yaml | grep eks.amazonaws.com/role-arn
 ```
 
-Check pod logs for AWS authentication errors:
+#### Check remote write status
+
 ```bash
-kubectl logs -n prometheus <pod-name> | grep -i "error\|auth"
+kubectl logs -n prometheus -l app=prometheus --tail=100 | grep "remote_name"
 ```
 
-### Metrics not appearing in AMP
-
-1. Check remote write configuration in the ConfigMap
-2. Verify IAM role has AMP write permissions
-3. Check Prometheus logs for remote write errors:
-   ```bash
-   kubectl logs -n prometheus <pod-name> | grep remote_write
-   ```
+Look for "Starting WAL watcher" and "Done replaying WAL" messages.
 
 ## Configuration
 
