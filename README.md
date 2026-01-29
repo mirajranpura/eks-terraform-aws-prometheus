@@ -27,12 +27,21 @@ This Terraform project creates an AWS EKS cluster with a managed node group in p
 ├── variables.tf               # Input variables
 ├── outputs.tf                 # Output values
 ├── terraform.tfvars.example   # Example variables file
+├── README.md                  # This file
+├── DEPLOYMENT.md              # Deployment guide
+├── .gitignore                 # Git ignore rules
+├── .terraform.lock.hcl        # Terraform dependency lock
 ├── k8s/                       # Kubernetes manifests
+│   ├── README.md              # K8s deployment documentation
+│   ├── TROUBLESHOOTING.md     # K8s troubleshooting guide
 │   ├── prometheus-namespace.yaml
 │   ├── prometheus-serviceaccount.yaml
 │   ├── prometheus-rbac.yaml
 │   ├── prometheus-config.yaml
 │   └── prometheus-deployment.yaml
+├── scripts/                   # Deployment automation
+│   ├── README.md              # Scripts documentation
+│   └── deploy-prometheus.sh   # Prometheus deployment script
 └── modules/
     ├── vpc/                   # VPC module
     │   ├── main.tf
